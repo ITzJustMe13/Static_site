@@ -3,6 +3,7 @@ from inline_markdown import (
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
+    text_to_textnodes,
     extract_markdown_links,
     extract_markdown_images,
 )
@@ -69,6 +70,19 @@ class TestInlineMarkdown(unittest.TestCase):
                 TextNode("This is text with an ", text_type_text),
                 TextNode("italic", text_type_italic),
                 TextNode(" word", text_type_text),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_bold_and_italic(self):
+        node = TextNode("**bold** and *italic*", text_type_text)
+        new_nodes = split_nodes_delimiter([node], "**", text_type_bold)
+        new_nodes = split_nodes_delimiter(new_nodes, "*", text_type_italic)
+        self.assertEqual(
+            [
+                TextNode("bold", text_type_bold),
+                TextNode(" and ", text_type_text),
+                TextNode("italic", text_type_italic),
             ],
             new_nodes,
         )
@@ -164,8 +178,8 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,
         )
-    
-     def test_text_to_textnodes(self):
+
+    def test_text_to_textnodes(self):
         nodes = text_to_textnodes(
             "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
         )
